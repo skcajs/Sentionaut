@@ -1,8 +1,14 @@
-use bevy::{prelude::*, render::camera::ScalingMode};
+use bevy::{prelude::*};
+use smooth_bevy_cameras::{
+    controllers::orbit::{OrbitCameraBundle, OrbitCameraController, OrbitCameraPlugin},
+    LookTransformPlugin,
+};
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugin(LookTransformPlugin)
+        .add_plugin(OrbitCameraPlugin::default())
         .add_startup_system(setup).run();
 }
 
@@ -29,14 +35,23 @@ fn setup(
         ..default()
     });
     // Camera
-    commands.spawn(Camera3dBundle {
-        projection: OrthographicProjection {
-            scale: 3.0,
-            scaling_mode: ScalingMode::FixedVertical(2.0),
-            ..default()
-        }
-        .into(),
-        transform: Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..default()
-    });
+    // commands.spawn(Camera3dBundle {
+    //     projection: OrthographicProjection {
+    //         scale: 3.0,
+    //         scaling_mode: ScalingMode::FixedVertical(2.0),
+    //         ..default()
+    //     }
+    //     .into(),
+    //     transform: Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+    //     ..default()
+    // });
+
+    commands
+        .spawn(Camera3dBundle::default())
+        .insert(OrbitCameraBundle::new(
+            OrbitCameraController::default(),
+            Vec3::new(-2.0, 5.0, 5.0),
+            Vec3::new(0., 0., 0.),
+            Vec3::Y,
+        ));
 }
