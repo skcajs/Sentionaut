@@ -34,22 +34,18 @@ fn setup(
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..default()
     });
-    // Camera
-    // commands.spawn(Camera3dBundle {
-    //     projection: OrthographicProjection {
-    //         scale: 3.0,
-    //         scaling_mode: ScalingMode::FixedVertical(2.0),
-    //         ..default()
-    //     }
-    //     .into(),
-    //     transform: Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-    //     ..default()
-    // });
 
     commands
         .spawn(Camera3dBundle::default())
         .insert(OrbitCameraBundle::new(
-            OrbitCameraController::default(),
+            OrbitCameraController {
+                mouse_rotate_sensitivity: Vec2::splat(0.2),
+                mouse_translate_sensitivity: Vec2::splat(1.0),
+                mouse_wheel_zoom_sensitivity: 0.2,
+                smoothing_weight: 0.1,
+                enabled: true,
+                pixels_per_line: 53.0,
+            },
             Vec3::new(-2.0, 5.0, 5.0),
             Vec3::new(0., 0., 0.),
             Vec3::Y,
