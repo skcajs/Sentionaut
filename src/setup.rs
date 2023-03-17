@@ -8,14 +8,66 @@ use smooth_bevy_cameras::controllers::orbit::{OrbitCameraBundle, OrbitCameraCont
 pub fn setup_world(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<LandMaterial>>,
+    mut standard_materials: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
+    // // Plane
+    // commands.spawn(PbrBundle {
+    //     mesh: meshes.add(shape::Plane::from_size(5.0).into()),
+    //     material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+    //     ..default()
+    // });
+
     // Plane
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(5.0).into()),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-        ..default()
+    let mut land = Mesh::from(Land {
+        size: 1000.0,
+        num_vertices: 1000,
     });
+    if let Some(VertexAttributeValues::Float32x3(positions)) =
+        land.attribute(Mesh::ATTRIBUTE_POSITION)
+    {
+        let colors: Vec<[f32; 4]> = positions
+            .iter()
+            .map(|[r, g, b]| [(1. - *r) / 2., (1. - *g) / 2., (1. - *b) / 2., 1.])
+            .collect();
+        land.insert_attribute(Mesh::ATTRIBUTE_COLOR, colors);
+    }
+
+    commands
+        .spawn(MaterialMeshBundle::default())
+        .insert_bundle(MaterialMeshBundle {
+            mesh: meshes.add(land),
+            transform: Transform::from_xyz(0.0, 0.5, 0.0),
+            material: materials.add(LandMaterial {
+                time: 0.,
+                ship_position: Vec3::ZERO,
+            }),
+            // material: standard_materials.add(
+            //     StandardMaterial {
+            //         base_color: Color::WHITE,
+            //         ..default()
+            //     },
+            // ),
+            ..default()
+        });
+    // .insert(Wireframe);
+
+    // ship
+    commands
+        .spawn(MaterialMeshBundle::default())
+        .insert_bundle(MaterialMeshBundle {
+            mesh: meshes.add(Mesh::from(shape::Cube { size: 0.3 })),
+            transform: Transform::from_xyz(0.0, 1.5, 0.0),
+            material: standard_materials.add(StandardMaterial {
+                base_color: Color::BLUE,
+                ..default()
+            }),
+            ..default()
+        })
+        .insert(Ship)
+        .insert(Movable);
+
     // Light
     commands.spawn(PointLightBundle {
         point_light: PointLight {
@@ -26,17 +78,6 @@ pub fn setup_world(
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..default()
     });
-    // Camera
-    // commands.spawn(Camera3dBundle {
-    //     projection: OrthographicProjection {
-    //         scale: 3.0,
-    //         scaling_mode: ScalingMode::FixedVertical(2.0),
-    //         ..default()
-    //     }
-    //     .into(),
-    //     transform: Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-    //     ..default()
-    // });
 
     commands
         .spawn(Camera3dBundle::default())
