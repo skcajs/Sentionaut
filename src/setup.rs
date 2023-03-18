@@ -2,6 +2,7 @@ use bevy::prelude::{
     default, shape, Assets, Camera3dBundle, Color, Commands, Mesh, PbrBundle, PointLight,
     PointLightBundle, ResMut, StandardMaterial, Transform, Vec3,
 };
+use bevy_atmosphere::prelude::AtmosphereCamera;
 use smooth_bevy_cameras::controllers::orbit::{OrbitCameraBundle, OrbitCameraController};
 
 // setup for 3D scene
@@ -39,7 +40,7 @@ pub fn setup_world(
     // });
 
     commands
-        .spawn(Camera3dBundle::default())
+        .spawn((Camera3dBundle::default(), AtmosphereCamera::default()))
         .insert(OrbitCameraBundle::new(
             OrbitCameraController::default(),
             Vec3::new(-2.0, 5.0, 5.0),
