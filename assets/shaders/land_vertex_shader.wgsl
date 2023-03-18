@@ -152,7 +152,7 @@ fn vertex(vertex: Vertex) -> VertexOutput {
 
     out.color = vec4<f32>(0.5, noise, 0.5, 1.0);
 
-    out.world_position = mesh_position_local_to_world(model, vec4<f32>(vertex.position.x, noise, vertex.position.z, 1.0));
+    out.world_position = mesh_position_local_to_world(model, vec4<f32>(vertex.position.x, noise*noise, vertex.position.z, 1.0));
 
     out.clip_position = mesh_position_world_to_clip(out.world_position);
 

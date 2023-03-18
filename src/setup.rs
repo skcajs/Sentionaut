@@ -15,7 +15,7 @@ pub fn setup_world(
     // land
     let mut land = Mesh::from(Land {
         size: 100.0,
-        num_vertices: 10,
+        num_vertices: 100,
     });
     if let Some(VertexAttributeValues::Float32x3(
         positions,
@@ -103,8 +103,8 @@ impl From<Land> for Mesh {
                         x as f32 * jump - 0.5 * extent,
                         0.0,
                         y as f32 * jump - 0.5 * extent,
-                    ],
-                    [0.0, 1.0, 0.0],
+                    ],  // increments from -x to +x, e.g -5 to +5
+                    [0.0, 1.0, 0.0], // Normals
                     [
                         x as f32
                             / plane.num_vertices as f32,
@@ -115,6 +115,7 @@ impl From<Land> for Mesh {
             })
             .collect::<Vec<_>>();
 
+        // Creating the triangles
         let indices = Indices::U32(
             (0..=plane.num_vertices)
                 .cartesian_product(0..=plane.num_vertices)
