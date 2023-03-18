@@ -1,6 +1,6 @@
 use bevy::{prelude::{
-    default, shape, Assets, Camera3dBundle, Color, Commands, Mesh, PbrBundle, PointLight,
-    PointLightBundle, ResMut, StandardMaterial, Transform, Vec3, MaterialMeshBundle, Material,
+    default, Assets, Camera3dBundle, Commands, Mesh, PointLight,
+    PointLightBundle, ResMut, Transform, Vec3, MaterialMeshBundle, Material,
 }, render::{mesh::{VertexAttributeValues, Indices}, render_resource::{AsBindGroup, ShaderRef, PrimitiveTopology}}, reflect::TypeUuid};
 use bevy_atmosphere::prelude::AtmosphereCamera;
 use smooth_bevy_cameras::controllers::orbit::{OrbitCameraBundle, OrbitCameraController};
@@ -10,19 +10,12 @@ use itertools::Itertools;
 pub fn setup_world(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<LandMaterial>>,
 ) {
-    // Plane
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(5.0).into()),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-        ..default()
-    });
-
     // land
     let mut land = Mesh::from(Land {
-        size: 1000.0,
-        num_vertices: 1000,
+        size: 100.0,
+        num_vertices: 10,
     });
     if let Some(VertexAttributeValues::Float32x3(
         positions,
@@ -73,8 +66,6 @@ pub fn setup_world(
         ..default()
     });
 }
-
-
 
 /// The Material trait is very configurable, but comes with sensible defaults for all methods.
 /// You only need to implement functions for features that need non-default behavior. See the Material api docs for details!

@@ -1,21 +1,14 @@
 mod setup;
 
 use bevy::{
-    prelude::{App, AmbientLight, Color, ClearColor, MaterialPlugin, DefaultPlugins, Material, Mesh}, 
-    render::{
-        mesh::{
-            Indices, PrimitiveTopology,
-            VertexAttributeValues,
-        },
-        render_resource::{AsBindGroup, ShaderRef},
-    }, reflect::TypeUuid
+    prelude::{App, AmbientLight, Color, ClearColor, MaterialPlugin, DefaultPlugins}, 
 };
 
 use smooth_bevy_cameras::{controllers::orbit::OrbitCameraPlugin, LookTransformPlugin};
 use bevy_editor_pls::prelude::*;
 use bevy_atmosphere::prelude::*;
 
-use setup::setup_world;
+use setup::{setup_world, LandMaterial};
 
 fn main() {
     App::new()
@@ -37,4 +30,3 @@ fn main() {
         .add_startup_system(setup_world)
         .run();
 }
-
