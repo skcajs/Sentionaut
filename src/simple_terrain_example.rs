@@ -1,23 +1,47 @@
-use bevy::{prelude::{
-    default, shape, Assets, Camera3dBundle, Color, Commands, Mesh, PbrBundle, PointLight,
-    PointLightBundle, ResMut, StandardMaterial, Transform, Vec3, MaterialMeshBundle, Material,
-}, render::{mesh::{VertexAttributeValues, Indices}, render_resource::{AsBindGroup, ShaderRef, PrimitiveTopology}}, reflect::TypeUuid};
-use bevy_atmosphere::prelude::AtmosphereCamera;
-use smooth_bevy_cameras::controllers::orbit::{OrbitCameraBundle, OrbitCameraController};
+use bevy::{
+    prelude::*,
+    reflect::TypeUuid,
+    render::{
+        mesh::{
+            Indices, PrimitiveTopology,
+            VertexAttributeValues,
+        },
+        render_resource::{AsBindGroup, ShaderRef},
+    }
+};
 use itertools::Itertools;
 
-// setup for 3D scene
-pub fn setup_world(
+fn main() {
+    App::new()
+        .insert_resource(AmbientLight {
+            color: Color::WHITE,
+            brightness: 1.0 / 5.0f32,
+        })
+        .insert_resource(ClearColor(
+            Color::hex("590059").unwrap(),
+        ))
+        .add_plugins(DefaultPlugins)
+        .add_plugin(
+            MaterialPlugin::<LandMaterial>::default(),
+        )
+        .add_startup_system(setup)
+        .run();
+}
+
+fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<LandMaterial>>,
 ) {
-    // Plane
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(5.0).into()),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-        ..default()
-    });
+    commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 1.5, 2.0)
+                .looking_at(
+                    Vec3::new(0.0, 1.5, 0.0),
+                    Vec3::Y,
+                ),
+            ..default()
+        });
 
     // land
     let mut land = Mesh::from(Land {
@@ -44,26 +68,7 @@ pub fn setup_world(
             colors,
         );
     }
-    // Light
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
-            shadows_enabled: true,
-            ..default()
-        },
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..default()
-    });
 
-    commands
-        .spawn((Camera3dBundle::default(), AtmosphereCamera::default()))
-        .insert(OrbitCameraBundle::new(
-            OrbitCameraController::default(),
-            Vec3::new(-2.0, 5.0, 5.0),
-            Vec3::new(0., 0., 0.),
-            Vec3::Y,
-        ));
-    
     commands.spawn(MaterialMeshBundle {
         mesh: meshes.add(land),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
@@ -73,8 +78,6 @@ pub fn setup_world(
         ..default()
     });
 }
-
-
 
 /// The Material trait is very configurable, but comes with sensible defaults for all methods.
 /// You only need to implement functions for features that need non-default behavior. See the Material api docs for details!
