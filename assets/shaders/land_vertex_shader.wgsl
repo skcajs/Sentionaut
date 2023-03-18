@@ -150,9 +150,9 @@ fn vertex(vertex: Vertex) -> VertexOutput {
 
     var noise = simplexNoise3(vertex.position);
 
-    out.color = vec4<f32>(0.5, noise, 0.5, 1.0);
+    out.color = vec4<f32>(0.5, abs(noise), 0.5, 1.0);
 
-    out.world_position = mesh_position_local_to_world(model, vec4<f32>(vertex.position.x, noise*noise, vertex.position.z, 1.0));
+    out.world_position = mesh_position_local_to_world(model, vec4<f32>(vertex.position.x, abs(noise)*8.0, vertex.position.z, 1.0));
 
     out.clip_position = mesh_position_world_to_clip(out.world_position);
 

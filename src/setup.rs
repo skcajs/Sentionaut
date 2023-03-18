@@ -15,7 +15,7 @@ pub fn setup_world(
     // land
     let mut land = Mesh::from(Land {
         size: 100.0,
-        num_vertices: 100,
+        num_vertices: 10,
     });
     if let Some(VertexAttributeValues::Float32x3(
         positions,
@@ -52,7 +52,7 @@ pub fn setup_world(
         .spawn((Camera3dBundle::default(), AtmosphereCamera::default()))
         .insert(OrbitCameraBundle::new(
             OrbitCameraController::default(),
-            Vec3::new(-2.0, 5.0, 5.0),
+            Vec3::new(0.0, 45.0, 45.0),
             Vec3::new(0., 0., 0.),
             Vec3::Y,
         ));
