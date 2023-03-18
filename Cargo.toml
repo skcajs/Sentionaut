@@ -12,6 +12,7 @@ bevy = { version = "0.10.0", features = ["dynamic_linking"] }
 bevy_atmosphere = "0.6.0"
 bevy_editor_pls = "0.3.0"
 smooth-bevy-cameras = "0.8.0"
+itertools = "0.10.3"
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
