@@ -1,83 +1,5 @@
-use bevy::{
-    prelude::*,
-    reflect::TypeUuid,
-    render::{
-        mesh::{
-            Indices, PrimitiveTopology,
-            VertexAttributeValues,
-        },
-        render_resource::{AsBindGroup, ShaderRef},
-    }
-};
+use bevy::{prelude::{Mesh, Material}, render::{mesh::Indices, render_resource::{AsBindGroup, ShaderRef, PrimitiveTopology}}, reflect::TypeUuid};
 use itertools::Itertools;
-
-fn main() {
-    App::new()
-        .insert_resource(AmbientLight {
-            color: Color::WHITE,
-            brightness: 1.0 / 5.0f32,
-        })
-        .insert_resource(ClearColor(
-            Color::hex("590059").unwrap(),
-        ))
-        .add_plugins(DefaultPlugins)
-        .add_plugin(
-            MaterialPlugin::<LandMaterial>::default(),
-        )
-        .add_startup_system(setup)
-        .run();
-}
-
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<LandMaterial>>,
-) {
-    commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 1.5, 2.0)
-                .looking_at(
-                    Vec3::new(0.0, 1.5, 0.0),
-                    Vec3::Y,
-                ),
-            ..default()
-        });
-
-    // land
-    let mut land = Mesh::from(Land {
-        size: 1000.0,
-        num_vertices: 1000,
-    });
-    if let Some(VertexAttributeValues::Float32x3(
-        positions,
-    )) = land.attribute(Mesh::ATTRIBUTE_POSITION)
-    {
-        let colors: Vec<[f32; 4]> = positions
-            .iter()
-            .map(|[r, g, b]| {
-                [
-                    (1. - *r) / 2.,
-                    (1. - *g) / 2.,
-                    (1. - *b) / 2.,
-                    1.,
-                ]
-            })
-            .collect();
-        land.insert_attribute(
-            Mesh::ATTRIBUTE_COLOR,
-            colors,
-        );
-    }
-
-    commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(land),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
-        material: materials.add(LandMaterial {
-            time: 0.,
-        }),
-        ..default()
-    });
-}
 
 /// The Material trait is very configurable, but comes with sensible defaults for all methods.
 /// You only need to implement functions for features that need non-default behavior. See the Material api docs for details!
@@ -92,13 +14,13 @@ impl Material for LandMaterial {
 #[uuid = "f690fdae-d598-45ab-8225-97e2a3f056e0"]
 pub struct LandMaterial {
     #[uniform(0)]
-    time: f32,
+    pub time: f32,
 }
 
 #[derive(Debug, Copy, Clone)]
-struct Land {
-    size: f32,
-    num_vertices: u32,
+pub struct Land {
+    pub size: f32,
+    pub num_vertices: u32,
 }
 
 impl From<Land> for Mesh {
@@ -115,8 +37,8 @@ impl From<Land> for Mesh {
                         x as f32 * jump - 0.5 * extent,
                         0.0,
                         y as f32 * jump - 0.5 * extent,
-                    ],
-                    [0.0, 1.0, 0.0],
+                    ],  // increments from -x to +x, e.g -5 to +5
+                    [0.0, 1.0, 0.0], // Normals
                     [
                         x as f32
                             / plane.num_vertices as f32,
@@ -127,6 +49,7 @@ impl From<Land> for Mesh {
             })
             .collect::<Vec<_>>();
 
+        // Creating the triangles
         let indices = Indices::U32(
             (0..=plane.num_vertices)
                 .cartesian_product(0..=plane.num_vertices)
