@@ -1,8 +1,7 @@
 mod setup;
-mod terrain;
 
 use bevy::{
-    prelude::{App, AmbientLight, Color, ClearColor, MaterialPlugin, DefaultPlugins}, 
+    prelude::{App, AmbientLight, Color, ClearColor, DefaultPlugins}, 
 };
 
 use smooth_bevy_cameras::{controllers::orbit::OrbitCameraPlugin, LookTransformPlugin};
@@ -10,8 +9,6 @@ use bevy_editor_pls::prelude::*;
 use bevy_atmosphere::prelude::*;
 
 use setup::setup_world;
-use terrain::LandMaterial;
-
 fn main() {
     App::new()
         .insert_resource(AmbientLight {
@@ -22,9 +19,6 @@ fn main() {
             Color::hex("590059").unwrap(),
         ))
         .add_plugins(DefaultPlugins)
-        .add_plugin(
-            MaterialPlugin::<LandMaterial>::default(),
-        )
         .add_plugin(EditorPlugin)
         .add_plugin(AtmospherePlugin)
         .add_plugin(LookTransformPlugin)

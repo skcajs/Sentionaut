@@ -1,61 +1,39 @@
 use bevy::{prelude::{
-    default, Assets, Camera3dBundle, Commands, Mesh, PointLight,
-    PointLightBundle, ResMut, Transform, Vec3, MaterialMeshBundle,
-}, render::mesh::VertexAttributeValues};
+    default, Assets, Camera3dBundle, Commands, Mesh,
+    ResMut, Transform, Vec3, StandardMaterial, PbrBundle, shape, Color, DirectionalLightBundle, DirectionalLight,
+}};
 use bevy_atmosphere::prelude::AtmosphereCamera;
 use smooth_bevy_cameras::controllers::orbit::{OrbitCameraBundle, OrbitCameraController};
 
-use crate::terrain::{LandMaterial, Land};
+use std::io::{stdout, Write};
 
 // setup for 3D scene
 pub fn setup_world(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<LandMaterial>>,
+    mut materials: ResMut<Assets<StandardMaterial>>
 ) {
-    // land
-    let mut land = Mesh::from(Land {
-        size: 100.0,
-        num_vertices: 10,
-    });
-    if let Some(VertexAttributeValues::Float32x3(
-        positions,
-    )) = land.attribute(Mesh::ATTRIBUTE_POSITION)
-    {
-        let colors: Vec<[f32; 4]> = positions
-            .iter()
-            .map(|[r, g, b]| {
-                [
-                    (1. - *r) / 2.,
-                    (1. - *g) / 2.,
-                    (1. - *b) / 2.,
-                    1.,
-                ]
-            })
-            .collect();
-        land.insert_attribute(
-            Mesh::ATTRIBUTE_COLOR,
-            colors,
-        );
-    }
+    let mut lock = stdout().lock();
+    
+    let plane_handle = meshes.add(shape::Plane {size: 100.0,subdivisions: 16}.into());
 
-    commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(land),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
-        material: materials.add(LandMaterial {
-            time: 0.,
-        }),
+    writeln!(lock, "hello world").unwrap();
+    writeln!(lock, "{plane_handle:?}").unwrap();
+
+    // terrain
+    commands.spawn(PbrBundle {
+        mesh: plane_handle,
+        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
         ..default()
     });
     
     // Light
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
+    commands.spawn(DirectionalLightBundle {
+        directional_light: DirectionalLight {
             shadows_enabled: true,
             ..default()
         },
-        // transform: Transform::from_xyz(4.0, 8.0, 4.0),
+        transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..default()
     });
 
