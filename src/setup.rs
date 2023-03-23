@@ -38,26 +38,7 @@ pub fn setup_world(
             colors,
         );
     }
-    // Light
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
-            shadows_enabled: true,
-            ..default()
-        },
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..default()
-    });
 
-    commands
-        .spawn((Camera3dBundle::default(), AtmosphereCamera::default()))
-        .insert(OrbitCameraBundle::new(
-            OrbitCameraController::default(),
-            Vec3::new(0.0, 45.0, 45.0),
-            Vec3::new(0., 0., 0.),
-            Vec3::Y,
-        ));
-    
     commands.spawn(MaterialMeshBundle {
         mesh: meshes.add(land),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
@@ -66,4 +47,25 @@ pub fn setup_world(
         }),
         ..default()
     });
+    
+    // Light
+    commands.spawn(PointLightBundle {
+        point_light: PointLight {
+            intensity: 1500.0,
+            shadows_enabled: true,
+            ..default()
+        },
+        // transform: Transform::from_xyz(4.0, 8.0, 4.0),
+        ..default()
+    });
+
+    // Camera
+    commands
+        .spawn((Camera3dBundle::default(), AtmosphereCamera::default()))
+        .insert(OrbitCameraBundle::new(
+            OrbitCameraController::default(),
+            Vec3::new(0.0, 45.0, 45.0),
+            Vec3::new(0., 0., 0.),
+            Vec3::Y,
+        ));
 }

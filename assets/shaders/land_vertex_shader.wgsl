@@ -102,7 +102,7 @@ fn vertex(vertex: Vertex) -> VertexOutput {
 
     var noise = simplexNoise2(vec2<f32>(vertex.position.x, vertex.position.z));
 
-    out.color = vec4<f32>(0.1, 0.0, 0.4, 1.0);
+    out.color = vec4<f32>(0.5, abs(noise), 0.5, 1.0);
 
     out.world_position = mesh_position_local_to_world(model, vec4<f32>(vertex.position.x, abs(noise)*8.0, vertex.position.z, 1.0));
 
